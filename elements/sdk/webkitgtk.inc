@@ -2,6 +2,12 @@ sources:
 - kind: tar
   url: webkitgtk:webkitgtk-2.53.92.tar.xz
   ref: 2ab7d6b3d586539fac574401a9bfe571c098f85f7835232ae0bc0bae9c9c5bd7
+# WebKitGTK doesn't build on riscv64 even with the JIT disabled, so
+# pretend the CPU is unknown to build with the CLoop interpreter and
+# the system malloc, like Debian does (webkit bug #271371).
+# No-op on architectures other than riscv64.
+- kind: patch
+  path: patches/webkit/fix-ftbfs-riscv64.patch
 
 build-depends:
 - (@): include/clang-for-recc.yml
