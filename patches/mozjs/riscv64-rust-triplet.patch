@@ -1,0 +1,18 @@
+--- a/build/moz.configure/rust.configure
++++ b/build/moz.configure/rust.configure
+@@ -375,6 +375,15 @@ def detect_rustc_target(
+                     ) and c.rust_target.endswith(suffix):
+                         return c.rust_target
+ 
++        # - For riscv64, rustc exposes multiple Linux targets that only differ in
++        #   CPU suffix or vendor (e.g. riscv64gc-unknown-linux-gnu and
++        #   riscv64-oe-linux-gnu).  Prefer the standard riscv64gc-unknown-linux-gnu
++        #   target, which is the one the host toolchain is built for.
++        if host_or_target.cpu == "riscv64" and host_or_target.endianness == "little":
++            for c in candidates:
++                if c.rust_target.startswith("riscv64gc-unknown-linux-gnu"):
++                    return c.rust_target
++
+         # See if we can narrow down on the exact alias.
+         # We use the sub_configure_alias to keep support mingw32 triplets as input.
+         narrowed = [
